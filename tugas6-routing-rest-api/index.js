@@ -53,19 +53,48 @@ app.delete('/api/products/:id', (req,res)=>{
     
 });
 
-app.get('/search',(req,res)=>{
+app.get('/api/search',(req,res)=>{
     const query_name = req.query;
-    if (!query_name) {
-        return res.status(400).send('parameter name is required');
-      }
-    const searchResult = products.filter(p => p.name.toLowerCase().includes(query_name.toLowerCase()));
-    if(searchResult.length ===0){
-        return res.status(404).send('No products found');
+
+    const result = products.filter(p => p.name.toLowerCase().includes(query_name.name.toLowerCase()));
+
+    if(result.length !==0){
+        res.json(result);
     }
-    res.json(searchResult);
+    else {
+        res.status(404).json({message : 'product not found'});
+    }
+});
+
+app.get('/api/products/:category/search',(req,res)=>{
+    const category_params = req.params;
+    const name_product = req.query;
+
+    const category_product = products.filter(params => params.Category.toLowerCase().includes(category_params.category.toLowerCase()));
+    const result_product = products.find(q => q.name.toLowerCase() === name_product.name.toLocaleLowerCase());
+    const match = category_product.filter(p => p.name.toLowerCase().includes(name_product.name.toLowerCase()));
+
+
+    if(category_product.length !== 0){
+        if(result_product){
+            if(match){
+                res.json(match);
+            }
+            else{
+                res.status(404).json({message :"name and category do not match"});
+            }
+        }
+        else {
+            res.status(404).json({message : 'name product not found'});
+        }
+    }
+    else {
+        res.status(404).json({message : 'category product not found'});
+    }
+
 });
 
 
 app.listen(port,()=>{
-    console.log(`Server is running at http://localhost:${port}/api/products`);
+    console.log(`Server is running at http://localhost:${port}`);
 });
