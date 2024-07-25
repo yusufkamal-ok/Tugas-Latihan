@@ -20,7 +20,7 @@ export default {
     },
     async findAll(req: Request, res: Response) {
         try {
-          const result = await CategoryModel.find({name : req.params}).populate("products");
+          const result = await CategoryModel.find().populate("products");
           res.status(200).json({
             data: result,
             message: "Success get all category",
